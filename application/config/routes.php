@@ -52,26 +52,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 
 $route['departments'] = 'departments/index';
-$route['departments/(:num)'] = 'departments/index/$1';
+//$route['departments/(:num)'] = 'departments/department/$1';
+$route['departments/(:any)'] = 'departments/department/$1';
 
 $route['categories'] = 'categories/index';
-$route['categories/(:num)'] = 'categories/index/$1';
+$route['categories/(:num)'] = 'categories/category/$1';
 $route['categories/inproduct/(:num)'] = 'categories/inProduct/$1';
 $route['categories/indepartment/(:num)'] = 'categories/inDepartment/$1';
 
 $route['attributes'] = 'attributes/index';
-$route['attributes/(:num)'] = 'attributes/index/$1';
+$route['attributes/(:num)'] = 'attributes/attribute/$1';
 $route['attributes/values/(:num)'] = 'attributes/values/$1';
 $route['attributes/inproduct/(:num)'] = 'attributes/inProduct/$1';
 
 $route['products'] = 'products/index';
-$route['products/(:num)'] = 'products/index/$1';
+$route['products/(:num)'] = 'products/product/$1';
 $route['products/incategory/(:num)'] = 'products/inCategory/$1';
 $route['products/indepartment/(:num)'] = 'products/inDepartment/$1';
 $route['products/(:num)/details'] = 'products/details/$1';
 $route['products/(:num)/locations'] = 'products/locations/$1';
-$route['products/(:num)/reviews'] = 'products/reviews/$1';
-@$route['products/(:num)/reviews']['POST'] = 'products/createReviews/$1';
+$route['products/(:num)/reviews']['GET'] = 'products/reviews/$1';
+@$route['products/(:num)/reviews']['POST'] = 'products/reviews/$1';
 
 $route['customer']['PUT'] = 'customers/updateCustomer';
 $route['customer']['GET'] = 'customers/customer';

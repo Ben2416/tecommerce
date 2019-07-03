@@ -26,26 +26,26 @@ DELIMITER $$
 --
 -- Procedures
 --
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_add_attribute` (IN `inName` VARCHAR(100))  BEGIN
+CREATE PROCEDURE `catalog_add_attribute` (IN `inName` VARCHAR(100))  BEGIN
   INSERT INTO attribute (name) VALUES (inName);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_add_attribute_value` (IN `inAttributeId` INT, IN `inValue` VARCHAR(100))  BEGIN
+CREATE PROCEDURE `catalog_add_attribute_value` (IN `inAttributeId` INT, IN `inValue` VARCHAR(100))  BEGIN
   INSERT INTO attribute_value (attribute_id, value)
          VALUES (inAttributeId, inValue);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_add_category` (IN `inDepartmentId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
+CREATE PROCEDURE `catalog_add_category` (IN `inDepartmentId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
   INSERT INTO category (department_id, name, description)
          VALUES (inDepartmentId, inName, inDescription);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_add_department` (IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
+CREATE PROCEDURE `catalog_add_department` (IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
   INSERT INTO department (name, description)
          VALUES (inName, inDescription);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_add_product_to_category` (IN `inCategoryId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000), IN `inPrice` DECIMAL(10,2))  BEGIN
+CREATE PROCEDURE `catalog_add_product_to_category` (IN `inCategoryId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000), IN `inPrice` DECIMAL(10,2))  BEGIN
   DECLARE productLastInsertId INT;
 
   INSERT INTO product (name, description, price)
@@ -57,17 +57,17 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_add_product_to_category` (I
          VALUES (productLastInsertId, inCategoryId);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_assign_attribute_value_to_product` (IN `inProductId` INT, IN `inAttributeValueId` INT)  BEGIN
+CREATE PROCEDURE `catalog_assign_attribute_value_to_product` (IN `inProductId` INT, IN `inAttributeValueId` INT)  BEGIN
   INSERT INTO product_attribute (product_id, attribute_value_id)
          VALUES (inProductId, inAttributeValueId);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_assign_product_to_category` (IN `inProductId` INT, IN `inCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_assign_product_to_category` (IN `inProductId` INT, IN `inCategoryId` INT)  BEGIN
   INSERT INTO product_category (product_id, category_id)
          VALUES (inProductId, inCategoryId);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_count_products_in_category` (IN `inCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_count_products_in_category` (IN `inCategoryId` INT)  BEGIN
   SELECT     COUNT(*) AS categories_count
   FROM       product p
   INNER JOIN product_category pc
@@ -75,13 +75,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_count_products_in_category`
   WHERE      pc.category_id = inCategoryId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_count_products_on_catalog` ()  BEGIN
+CREATE PROCEDURE `catalog_count_products_on_catalog` ()  BEGIN
   SELECT COUNT(*) AS products_on_catalog_count
   FROM   product
   WHERE  display = 1 OR display = 3;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_count_products_on_department` (IN `inDepartmentId` INT)  BEGIN
+CREATE PROCEDURE `catalog_count_products_on_department` (IN `inDepartmentId` INT)  BEGIN
   SELECT DISTINCT COUNT(*) AS products_on_department_count
   FROM            product p
   INNER JOIN      product_category pc
@@ -92,7 +92,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_count_products_on_departmen
                   AND c.department_id = inDepartmentId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_count_search_result` (IN `inSearchString` TEXT, IN `inAllWords` VARCHAR(3))  BEGIN
+CREATE PROCEDURE `catalog_count_search_result` (IN `inSearchString` TEXT, IN `inAllWords` VARCHAR(3))  BEGIN
   IF inAllWords = "on" THEN
     PREPARE statement FROM
       "SELECT   count(*)
@@ -110,12 +110,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_count_search_result` (IN `i
   EXECUTE statement USING @p1;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_create_product_review` (IN `inCustomerId` INT, IN `inProductId` INT, IN `inReview` TEXT, IN `inRating` SMALLINT)  BEGIN
+CREATE PROCEDURE `catalog_create_product_review` (IN `inCustomerId` INT, IN `inProductId` INT, IN `inReview` TEXT, IN `inRating` SMALLINT)  BEGIN
   INSERT INTO review (customer_id, product_id, review, rating, created_on)
          VALUES (inCustomerId, inProductId, inReview, inRating, NOW());
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_attribute` (IN `inAttributeId` INT)  BEGIN
+CREATE PROCEDURE `catalog_delete_attribute` (IN `inAttributeId` INT)  BEGIN
   DECLARE attributeRowsCount INT;
 
   SELECT count(*)
@@ -132,7 +132,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_attribute` (IN `inAt
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_attribute_value` (IN `inAttributeValueId` INT)  BEGIN
+CREATE PROCEDURE `catalog_delete_attribute_value` (IN `inAttributeValueId` INT)  BEGIN
   DECLARE productAttributeRowsCount INT;
 
   SELECT      count(*)
@@ -151,7 +151,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_attribute_value` (IN
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_category` (IN `inCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_delete_category` (IN `inCategoryId` INT)  BEGIN
   DECLARE productCategoryRowsCount INT;
 
   SELECT      count(*)
@@ -170,7 +170,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_category` (IN `inCat
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_department` (IN `inDepartmentId` INT)  BEGIN
+CREATE PROCEDURE `catalog_delete_department` (IN `inDepartmentId` INT)  BEGIN
   DECLARE categoryRowsCount INT;
 
   SELECT count(*)
@@ -187,18 +187,18 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_department` (IN `inD
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_delete_product` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_delete_product` (IN `inProductId` INT)  BEGIN
   DELETE FROM product_attribute WHERE product_id = inProductId;
   DELETE FROM product_category WHERE product_id = inProductId;
   DELETE FROM shopping_cart WHERE product_id = inProductId;
   DELETE FROM product WHERE product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_attributes` ()  BEGIN
+CREATE PROCEDURE `catalog_get_attributes` ()  BEGIN
   SELECT attribute_id, name FROM attribute ORDER BY attribute_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_attributes_not_assigned_to_product` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_attributes_not_assigned_to_product` (IN `inProductId` INT)  BEGIN
   SELECT     a.name AS attribute_name,
              av.attribute_value_id, av.value AS attribute_value
   FROM       attribute_value av
@@ -211,26 +211,26 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_attributes_not_assigned
   ORDER BY   attribute_name, av.attribute_value_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_attribute_details` (IN `inAttributeId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_attribute_details` (IN `inAttributeId` INT)  BEGIN
   SELECT attribute_id, name
   FROM   attribute
   WHERE  attribute_id = inAttributeId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_attribute_values` (IN `inAttributeId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_attribute_values` (IN `inAttributeId` INT)  BEGIN
   SELECT   attribute_value_id, value
   FROM     attribute_value
   WHERE    attribute_id = inAttributeId
   ORDER BY attribute_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_categories` ()  BEGIN
+CREATE PROCEDURE `catalog_get_categories` ()  BEGIN
   SELECT   category_id, name, description
   FROM     category
   ORDER BY category_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_categories_for_product` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_categories_for_product` (IN `inProductId` INT)  BEGIN
   SELECT   c.category_id, c.department_id, c.name
   FROM     category c
   JOIN     product_category pc
@@ -239,24 +239,24 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_categories_for_product`
   ORDER BY category_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_categories_list` (IN `inDepartmentId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_categories_list` (IN `inDepartmentId` INT)  BEGIN
   SELECT   category_id, name
   FROM     category
   WHERE    department_id = inDepartmentId
   ORDER BY category_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_category_details` (IN `inCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_category_details` (IN `inCategoryId` INT)  BEGIN
   SELECT name, description
   FROM   category
   WHERE  category_id = inCategoryId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_category_name` (IN `inCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_category_name` (IN `inCategoryId` INT)  BEGIN
   SELECT name FROM category WHERE category_id = inCategoryId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_category_products` (IN `inCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_category_products` (IN `inCategoryId` INT)  BEGIN
   SELECT     p.product_id, p.name, p.description, p.price,
              p.discounted_price
   FROM       product p
@@ -266,34 +266,34 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_category_products` (IN 
   ORDER BY   p.product_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_departments` ()  BEGIN
+CREATE PROCEDURE `catalog_get_departments` ()  BEGIN
   SELECT   department_id, name, description
   FROM     department
   ORDER BY department_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_departments_list` ()  BEGIN
+CREATE PROCEDURE `catalog_get_departments_list` ()  BEGIN
   SELECT department_id, name FROM department ORDER BY department_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_department_categories` (IN `inDepartmentId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_department_categories` (IN `inDepartmentId` INT)  BEGIN
   SELECT   category_id, name, description
   FROM     category
   WHERE    department_id = inDepartmentId
   ORDER BY category_id;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_department_details` (IN `inDepartmentId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_department_details` (IN `inDepartmentId` INT)  BEGIN
   SELECT name, description
   FROM   department
   WHERE  department_id = inDepartmentId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_department_name` (IN `inDepartmentId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_department_name` (IN `inDepartmentId` INT)  BEGIN
   SELECT name FROM department WHERE department_id = inDepartmentId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_products_in_category` (IN `inCategoryId` INT, IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_products_in_category` (IN `inCategoryId` INT, IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
   -- Prepare statement
   PREPARE statement FROM
    "SELECT     p.product_id, p.name,
@@ -320,7 +320,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_products_in_category` (
   EXECUTE statement USING @p1, @p2, @p3, @p4, @p5;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_products_on_catalog` (IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_products_on_catalog` (IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
   PREPARE statement FROM
     "SELECT   product_id, name,
               IF(LENGTH(description) <= ?,
@@ -341,7 +341,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_products_on_catalog` (I
   EXECUTE statement USING @p1, @p2, @p3, @p4;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_products_on_department` (IN `inDepartmentId` INT, IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_products_on_department` (IN `inDepartmentId` INT, IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
   PREPARE statement FROM
     "SELECT DISTINCT p.product_id, p.name,
                      IF(LENGTH(p.description) <= ?,
@@ -368,7 +368,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_products_on_department`
   EXECUTE statement USING @p1, @p2, @p3, @p4, @p5;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_attributes` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_product_attributes` (IN `inProductId` INT)  BEGIN
   SELECT     a.name AS attribute_name,
              av.attribute_value_id, av.value AS attribute_value
   FROM       attribute_value av
@@ -381,21 +381,21 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_attributes` (IN
   ORDER BY   a.name;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_details` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_product_details` (IN `inProductId` INT)  BEGIN
   SELECT product_id, name, description,
          price, discounted_price, image, image_2
   FROM   product
   WHERE  product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_info` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_product_info` (IN `inProductId` INT)  BEGIN
   SELECT product_id, name, description, price, discounted_price,
          image, image_2, thumbnail, display
   FROM   product
   WHERE  product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_locations` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_product_locations` (IN `inProductId` INT)  BEGIN
   SELECT c.category_id, c.name AS category_name, c.department_id,
          (SELECT name
           FROM   department
@@ -409,11 +409,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_locations` (IN 
             -- Subquery returns the category IDs a product belongs to
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_name` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_product_name` (IN `inProductId` INT)  BEGIN
   SELECT name FROM product WHERE product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_reviews` (IN `inProductId` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_product_reviews` (IN `inProductId` INT)  BEGIN
   SELECT     c.name, r.review, r.rating, r.created_on
   FROM       review r
   INNER JOIN customer c
@@ -422,7 +422,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_product_reviews` (IN `i
   ORDER BY   r.created_on DESC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_recommendations` (IN `inProductId` INT, IN `inShortProductDescriptionLength` INT)  BEGIN
+CREATE PROCEDURE `catalog_get_recommendations` (IN `inProductId` INT, IN `inShortProductDescriptionLength` INT)  BEGIN
   PREPARE statement FROM
     "SELECT   od2.product_id, od2.product_name,
               IF(LENGTH(p.description) <= ?, p.description,
@@ -442,20 +442,20 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_get_recommendations` (IN `i
   EXECUTE statement USING @p1, @p1, @p2, @p2;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_move_product_to_category` (IN `inProductId` INT, IN `inSourceCategoryId` INT, IN `inTargetCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_move_product_to_category` (IN `inProductId` INT, IN `inSourceCategoryId` INT, IN `inTargetCategoryId` INT)  BEGIN
   UPDATE product_category
   SET    category_id = inTargetCategoryId
   WHERE  product_id = inProductId
          AND category_id = inSourceCategoryId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_remove_product_attribute_value` (IN `inProductId` INT, IN `inAttributeValueId` INT)  BEGIN
+CREATE PROCEDURE `catalog_remove_product_attribute_value` (IN `inProductId` INT, IN `inAttributeValueId` INT)  BEGIN
   DELETE FROM product_attribute
   WHERE       product_id = inProductId AND
               attribute_value_id = inAttributeValueId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_remove_product_from_category` (IN `inProductId` INT, IN `inCategoryId` INT)  BEGIN
+CREATE PROCEDURE `catalog_remove_product_from_category` (IN `inProductId` INT, IN `inCategoryId` INT)  BEGIN
   DECLARE productCategoryRowsCount INT;
 
   SELECT count(*)
@@ -475,7 +475,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_remove_product_from_categor
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_search` (IN `inSearchString` TEXT, IN `inAllWords` VARCHAR(3), IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
+CREATE PROCEDURE `catalog_search` (IN `inSearchString` TEXT, IN `inAllWords` VARCHAR(3), IN `inShortProductDescriptionLength` INT, IN `inProductsPerPage` INT, IN `inStartItem` INT)  BEGIN
   IF inAllWords = "on" THEN
     PREPARE statement FROM
       "SELECT   product_id, name,
@@ -512,61 +512,61 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_search` (IN `inSearchString
   EXECUTE statement USING @p1, @p1, @p2, @p2, @p3, @p4;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_set_image` (IN `inProductId` INT, IN `inImage` VARCHAR(150))  BEGIN
+CREATE PROCEDURE `catalog_set_image` (IN `inProductId` INT, IN `inImage` VARCHAR(150))  BEGIN
   UPDATE product SET image = inImage WHERE product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_set_image_2` (IN `inProductId` INT, IN `inImage` VARCHAR(150))  BEGIN
+CREATE PROCEDURE `catalog_set_image_2` (IN `inProductId` INT, IN `inImage` VARCHAR(150))  BEGIN
   UPDATE product SET image_2 = inImage WHERE product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_set_product_display_option` (IN `inProductId` INT, IN `inDisplay` SMALLINT)  BEGIN
+CREATE PROCEDURE `catalog_set_product_display_option` (IN `inProductId` INT, IN `inDisplay` SMALLINT)  BEGIN
   UPDATE product SET display = inDisplay WHERE product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_set_thumbnail` (IN `inProductId` INT, IN `inThumbnail` VARCHAR(150))  BEGIN
+CREATE PROCEDURE `catalog_set_thumbnail` (IN `inProductId` INT, IN `inThumbnail` VARCHAR(150))  BEGIN
   UPDATE product
   SET    thumbnail = inThumbnail
   WHERE  product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_update_attribute` (IN `inAttributeId` INT, IN `inName` VARCHAR(100))  BEGIN
+CREATE PROCEDURE `catalog_update_attribute` (IN `inAttributeId` INT, IN `inName` VARCHAR(100))  BEGIN
   UPDATE attribute SET name = inName WHERE attribute_id = inAttributeId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_update_attribute_value` (IN `inAttributeValueId` INT, IN `inValue` VARCHAR(100))  BEGIN
+CREATE PROCEDURE `catalog_update_attribute_value` (IN `inAttributeValueId` INT, IN `inValue` VARCHAR(100))  BEGIN
     UPDATE attribute_value
     SET    value = inValue
     WHERE  attribute_value_id = inAttributeValueId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_update_category` (IN `inCategoryId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
+CREATE PROCEDURE `catalog_update_category` (IN `inCategoryId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
     UPDATE category
     SET    name = inName, description = inDescription
     WHERE  category_id = inCategoryId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_update_department` (IN `inDepartmentId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
+CREATE PROCEDURE `catalog_update_department` (IN `inDepartmentId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000))  BEGIN
   UPDATE department
   SET    name = inName, description = inDescription
   WHERE  department_id = inDepartmentId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `catalog_update_product` (IN `inProductId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000), IN `inPrice` DECIMAL(10,2), IN `inDiscountedPrice` DECIMAL(10,2))  BEGIN
+CREATE PROCEDURE `catalog_update_product` (IN `inProductId` INT, IN `inName` VARCHAR(100), IN `inDescription` VARCHAR(1000), IN `inPrice` DECIMAL(10,2), IN `inDiscountedPrice` DECIMAL(10,2))  BEGIN
   UPDATE product
   SET    name = inName, description = inDescription, price = inPrice,
          discounted_price = inDiscountedPrice
   WHERE  product_id = inProductId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_add` (IN `inName` VARCHAR(50), IN `inEmail` VARCHAR(100), IN `inPassword` VARCHAR(50))  BEGIN
+CREATE PROCEDURE `customer_add` (IN `inName` VARCHAR(50), IN `inEmail` VARCHAR(100), IN `inPassword` VARCHAR(50))  BEGIN
   INSERT INTO customer (name, email, password)
          VALUES (inName, inEmail, inPassword);
 
   SELECT LAST_INSERT_ID();
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_get_customer` (IN `inCustomerId` INT)  BEGIN
+CREATE PROCEDURE `customer_get_customer` (IN `inCustomerId` INT)  BEGIN
   SELECT customer_id, name, email, password, credit_card,
          address_1, address_2, city, region, postal_code, country,
          shipping_region_id, day_phone, eve_phone, mob_phone
@@ -574,19 +574,19 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_get_customer` (IN `inCusto
   WHERE  customer_id = inCustomerId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_get_customers_list` ()  BEGIN
+CREATE PROCEDURE `customer_get_customers_list` ()  BEGIN
   SELECT customer_id, name FROM customer ORDER BY name ASC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_get_login_info` (IN `inEmail` VARCHAR(100))  BEGIN
+CREATE PROCEDURE `customer_get_login_info` (IN `inEmail` VARCHAR(100))  BEGIN
   SELECT customer_id, password FROM customer WHERE email = inEmail;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_get_shipping_regions` ()  BEGIN
+CREATE PROCEDURE `customer_get_shipping_regions` ()  BEGIN
   SELECT shipping_region_id, shipping_region FROM shipping_region;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_update_account` (IN `inCustomerId` INT, IN `inName` VARCHAR(50), IN `inEmail` VARCHAR(100), IN `inPassword` VARCHAR(50), IN `inDayPhone` VARCHAR(100), IN `inEvePhone` VARCHAR(100), IN `inMobPhone` VARCHAR(100))  BEGIN
+CREATE PROCEDURE `customer_update_account` (IN `inCustomerId` INT, IN `inName` VARCHAR(50), IN `inEmail` VARCHAR(100), IN `inPassword` VARCHAR(50), IN `inDayPhone` VARCHAR(100), IN `inEvePhone` VARCHAR(100), IN `inMobPhone` VARCHAR(100))  BEGIN
   UPDATE customer
   SET    name = inName, email = inEmail,
          password = inPassword, day_phone = inDayPhone,
@@ -594,7 +594,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_update_account` (IN `inCus
   WHERE  customer_id = inCustomerId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_update_address` (IN `inCustomerId` INT, IN `inAddress1` VARCHAR(100), IN `inAddress2` VARCHAR(100), IN `inCity` VARCHAR(100), IN `inRegion` VARCHAR(100), IN `inPostalCode` VARCHAR(100), IN `inCountry` VARCHAR(100), IN `inShippingRegionId` INT)  BEGIN
+CREATE PROCEDURE `customer_update_address` (IN `inCustomerId` INT, IN `inAddress1` VARCHAR(100), IN `inAddress2` VARCHAR(100), IN `inCity` VARCHAR(100), IN `inRegion` VARCHAR(100), IN `inPostalCode` VARCHAR(100), IN `inCountry` VARCHAR(100), IN `inShippingRegionId` INT)  BEGIN
   UPDATE customer
   SET    address_1 = inAddress1, address_2 = inAddress2, city = inCity,
          region = inRegion, postal_code = inPostalCode,
@@ -602,24 +602,24 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_update_address` (IN `inCus
   WHERE  customer_id = inCustomerId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `customer_update_credit_card` (IN `inCustomerId` INT, IN `inCreditCard` TEXT)  BEGIN
+CREATE PROCEDURE `customer_update_credit_card` (IN `inCustomerId` INT, IN `inCreditCard` TEXT)  BEGIN
   UPDATE customer
   SET    credit_card = inCreditCard
   WHERE  customer_id = inCustomerId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_create_audit` (IN `inOrderId` INT, IN `inMessage` TEXT, IN `inCode` INT)  BEGIN
+CREATE PROCEDURE `orders_create_audit` (IN `inOrderId` INT, IN `inMessage` TEXT, IN `inCode` INT)  BEGIN
   INSERT INTO audit (order_id, created_on, message, code)
          VALUES (inOrderId, NOW(), inMessage, inCode);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_audit_trail` (IN `inOrderId` INT)  BEGIN
+CREATE PROCEDURE `orders_get_audit_trail` (IN `inOrderId` INT)  BEGIN
   SELECT audit_id, order_id, created_on, message, code
   FROM   audit
   WHERE  order_id = inOrderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_by_customer_id` (IN `inCustomerId` INT)  BEGIN
+CREATE PROCEDURE `orders_get_by_customer_id` (IN `inCustomerId` INT)  BEGIN
   SELECT     o.order_id, o.total_amount, o.created_on,
              o.shipped_on, o.status, c.name
   FROM       orders o
@@ -629,7 +629,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_by_customer_id` (IN `inC
   ORDER BY   o.created_on DESC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_most_recent_orders` (IN `inHowMany` INT)  BEGIN
+CREATE PROCEDURE `orders_get_most_recent_orders` (IN `inHowMany` INT)  BEGIN
   PREPARE statement FROM
     "SELECT     o.order_id, o.total_amount, o.created_on,
                 o.shipped_on, o.status, c.name
@@ -644,7 +644,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_most_recent_orders` (IN 
   EXECUTE statement USING @p1;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_orders_between_dates` (IN `inStartDate` DATETIME, IN `inEndDate` DATETIME)  BEGIN
+CREATE PROCEDURE `orders_get_orders_between_dates` (IN `inStartDate` DATETIME, IN `inEndDate` DATETIME)  BEGIN
   SELECT     o.order_id, o.total_amount, o.created_on,
              o.shipped_on, o.status, c.name
   FROM       orders o
@@ -654,7 +654,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_orders_between_dates` (I
   ORDER BY   o.created_on DESC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_orders_by_status` (IN `inStatus` INT)  BEGIN
+CREATE PROCEDURE `orders_get_orders_by_status` (IN `inStatus` INT)  BEGIN
   SELECT     o.order_id, o.total_amount, o.created_on,
              o.shipped_on, o.status, c.name
   FROM       orders o
@@ -664,14 +664,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_orders_by_status` (IN `i
   ORDER BY   o.created_on DESC;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_order_details` (IN `inOrderId` INT)  BEGIN
+CREATE PROCEDURE `orders_get_order_details` (IN `inOrderId` INT)  BEGIN
   SELECT order_id, product_id, attributes, product_name,
          quantity, unit_cost, (quantity * unit_cost) AS subtotal
   FROM   order_detail
   WHERE  order_id = inOrderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_order_info` (IN `inOrderId` INT)  BEGIN
+CREATE PROCEDURE `orders_get_order_info` (IN `inOrderId` INT)  BEGIN
   SELECT     o.order_id, o.total_amount, o.created_on, o.shipped_on,
              o.status, o.comments, o.customer_id, o.auth_code,
              o.reference, o.shipping_id, s.shipping_type, s.shipping_cost,
@@ -684,7 +684,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_order_info` (IN `inOrder
   WHERE      o.order_id = inOrderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_order_short_details` (IN `inOrderId` INT)  BEGIN
+CREATE PROCEDURE `orders_get_order_short_details` (IN `inOrderId` INT)  BEGIN
   SELECT      o.order_id, o.total_amount, o.created_on,
               o.shipped_on, o.status, c.name
   FROM        orders o
@@ -693,23 +693,23 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_order_short_details` (IN
   WHERE       o.order_id = inOrderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_get_shipping_info` (IN `inShippingRegionId` INT)  BEGIN
+CREATE PROCEDURE `orders_get_shipping_info` (IN `inShippingRegionId` INT)  BEGIN
   SELECT shipping_id, shipping_type, shipping_cost, shipping_region_id
   FROM   shipping
   WHERE  shipping_region_id = inShippingRegionId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_set_auth_code` (IN `inOrderId` INT, IN `inAuthCode` VARCHAR(50), IN `inReference` VARCHAR(50))  BEGIN
+CREATE PROCEDURE `orders_set_auth_code` (IN `inOrderId` INT, IN `inAuthCode` VARCHAR(50), IN `inReference` VARCHAR(50))  BEGIN
   UPDATE orders
   SET    auth_code = inAuthCode, reference = inReference
   WHERE  order_id = inOrderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_set_date_shipped` (IN `inOrderId` INT)  BEGIN
+CREATE PROCEDURE `orders_set_date_shipped` (IN `inOrderId` INT)  BEGIN
   UPDATE orders SET shipped_on = NOW() WHERE order_id = inOrderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_update_order` (IN `inOrderId` INT, IN `inStatus` INT, IN `inComments` VARCHAR(255), IN `inAuthCode` VARCHAR(50), IN `inReference` VARCHAR(50))  BEGIN
+CREATE PROCEDURE `orders_update_order` (IN `inOrderId` INT, IN `inStatus` INT, IN `inComments` VARCHAR(255), IN `inAuthCode` VARCHAR(50), IN `inReference` VARCHAR(50))  BEGIN
   DECLARE currentDateShipped DATETIME;
 
   SELECT shipped_on
@@ -729,17 +729,17 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_update_order` (IN `inOrderId
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `orders_update_status` (IN `inOrderId` INT, IN `inStatus` INT)  BEGIN
+CREATE PROCEDURE `orders_update_status` (IN `inOrderId` INT, IN `inStatus` INT)  BEGIN
   UPDATE orders SET status = inStatus WHERE order_id = inOrderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shipping_region_get_by_id` (IN `inShippingRegionId` INT)  BEGIN
+CREATE PROCEDURE `shipping_region_get_by_id` (IN `inShippingRegionId` INT)  BEGIN
   SELECT shipping_region_id, shipping_region 
   FROM shipping_region
   WHERE shipping_region_id = inShippingRegionId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_add_product` (IN `inCartId` CHAR(32), IN `inProductId` INT, IN `inAttributes` VARCHAR(1000))  BEGIN
+CREATE PROCEDURE `shopping_cart_add_product` (IN `inCartId` CHAR(32), IN `inProductId` INT, IN `inAttributes` VARCHAR(1000))  BEGIN
   DECLARE productQuantity INT;
 
   -- Obtain current shopping cart quantity for the product
@@ -764,7 +764,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_add_product` (IN `inC
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_count_old_carts` (IN `inDays` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_count_old_carts` (IN `inDays` INT)  BEGIN
   SELECT COUNT(cart_id) AS old_shopping_carts_count
   FROM   (SELECT   cart_id
           FROM     shopping_cart
@@ -773,7 +773,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_count_old_carts` (IN 
          AS old_carts;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_create_order` (IN `inCartId` CHAR(32), IN `inCustomerId` INT, IN `inShippingId` INT, IN `inTaxId` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_create_order` (IN `inCartId` CHAR(32), IN `inCustomerId` INT, IN `inShippingId` INT, IN `inTaxId` INT)  BEGIN
   DECLARE orderId INT;
 
   -- Insert a new record into orders and obtain the new order ID
@@ -806,7 +806,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_create_order` (IN `in
   SELECT orderId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_delete_old_carts` (IN `inDays` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_delete_old_carts` (IN `inDays` INT)  BEGIN
   DELETE FROM shopping_cart
   WHERE  cart_id IN
           (SELECT cart_id
@@ -818,11 +818,11 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_delete_old_carts` (IN
                   AS sc);
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_empty` (IN `inCartId` CHAR(32))  BEGIN
+CREATE PROCEDURE `shopping_cart_empty` (IN `inCartId` CHAR(32))  BEGIN
   DELETE FROM shopping_cart WHERE cart_id = inCartId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_products` (IN `inCartId` CHAR(32))  BEGIN
+CREATE PROCEDURE `shopping_cart_get_products` (IN `inCartId` CHAR(32))  BEGIN
   SELECT     sc.item_id, p.name, sc.attributes,
              COALESCE(NULLIF(p.discounted_price, 0), p.price) AS price,
              sc.quantity,
@@ -834,7 +834,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_products` (IN `in
   WHERE      sc.cart_id = inCartId AND sc.buy_now;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_recommendations` (IN `inCartId` CHAR(32), IN `inShortProductDescriptionLength` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_get_recommendations` (IN `inCartId` CHAR(32), IN `inShortProductDescriptionLength` INT)  BEGIN
   PREPARE statement FROM
     "-- Returns the products that exist in a list of orders
      SELECT   od1.product_id, od1.product_name,
@@ -868,7 +868,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_recommendations` 
   EXECUTE statement USING @p1, @p1, @p2, @p2;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_saved_products` (IN `inCartId` CHAR(32))  BEGIN
+CREATE PROCEDURE `shopping_cart_get_saved_products` (IN `inCartId` CHAR(32))  BEGIN
   SELECT     sc.item_id, p.name, sc.attributes,
              COALESCE(NULLIF(p.discounted_price, 0), p.price) AS price
   FROM       shopping_cart sc
@@ -877,7 +877,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_saved_products` (
   WHERE      sc.cart_id = inCartId AND NOT sc.buy_now;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_total_amount` (IN `inCartId` CHAR(32))  BEGIN
+CREATE PROCEDURE `shopping_cart_get_total_amount` (IN `inCartId` CHAR(32))  BEGIN
   SELECT     SUM(COALESCE(NULLIF(p.discounted_price, 0), p.price)
                  * sc.quantity) AS total_amount
   FROM       shopping_cart sc
@@ -886,23 +886,23 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_get_total_amount` (IN
   WHERE      sc.cart_id = inCartId AND sc.buy_now;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_move_product_to_cart` (IN `inItemId` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_move_product_to_cart` (IN `inItemId` INT)  BEGIN
   UPDATE shopping_cart
   SET    buy_now = true, added_on = NOW()
   WHERE  item_id = inItemId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_remove_product` (IN `inItemId` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_remove_product` (IN `inItemId` INT)  BEGIN
   DELETE FROM shopping_cart WHERE item_id = inItemId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_save_product_for_later` (IN `inItemId` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_save_product_for_later` (IN `inItemId` INT)  BEGIN
   UPDATE shopping_cart
   SET    buy_now = false, quantity = 1
   WHERE  item_id = inItemId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_update` (IN `inItemId` INT, IN `inQuantity` INT)  BEGIN
+CREATE PROCEDURE `shopping_cart_update` (IN `inItemId` INT, IN `inQuantity` INT)  BEGIN
   IF inQuantity > 0 THEN
     UPDATE shopping_cart
     SET    quantity = inQuantity, added_on = NOW()
@@ -912,13 +912,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `shopping_cart_update` (IN `inItemId
   END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `tax_get_by_id` (IN `inTaxId` INT)  BEGIN
+CREATE PROCEDURE `tax_get_by_id` (IN `inTaxId` INT)  BEGIN
   SELECT tax_id, tax_type, tax_percentage 
   FROM tax 
   WHERE tax_id = inTaxId;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `tax_get_taxes` ()  BEGIN
+CREATE PROCEDURE `tax_get_taxes` ()  BEGIN
   SELECT tax_id, tax_type, tax_percentage FROM tax;
 END$$
 
